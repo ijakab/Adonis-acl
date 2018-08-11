@@ -1,0 +1,21 @@
+'use strict'
+
+const Schema = use('Schema')
+
+class AclActionServiceSchema extends Schema {
+  up () {
+    this.create('acl_action_services', (table) => {
+        //this table is used to keep track of what service type can assign what actions to it's roles. E.g. You might not want action 'MakePost' if it does not make sense for some services and it does for others. Also 'MakeSuperUser' might be wanted only on 'application' service
+        table.increments()
+        table.timestamps()
+        table.string('action_slug').notNullable()
+        table.string('service_type')
+    })
+  }
+
+  down () {
+    this.drop('acl_action_services')
+  }
+}
+
+module.exports = AclActionServiceSchema

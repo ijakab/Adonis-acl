@@ -1,0 +1,26 @@
+'use strict'
+
+const Schema = use('Schema')
+
+class AclRoleSchema extends Schema {
+  up () {
+    this.create('acl_roles', (table) => {
+        table.increments()
+        table.timestamps()
+        table.string('title') //You might not use this if you want localized titles and desc.
+        table.string('description')
+        table.string('locale_code') //If you need to assign some data to assign for translation, put it here. You can also use slug for same purpose, but be aware that slug is unique, so so if you want the same translation for multiple record, it might be a problem
+        table.string('slug').notNullable()
+        table.boolean('public').defaultsTo(false) // we need to keep track of weather we intended given role or users have created one. E.g. if user creates role "Decorator" for his service, we don't won't it to be automatically displayed as option for other services of the same type
+        table.boolean('foreign') // if you have connected services, you might want parent service role to have some action in child service. E.g. agencies has forums, and they want their admin to have some custom privileges on their forum, but not as forum admin. Way you would do it is to create new role, AgencyAdmin, set this to true and assign user to both roles. Foreign roles are not displayed while selecting roles
+        table.integer('acl_service_id') // every service has own roles. if NULL it means that role is for every service of the type
+        table.string('service_type') //matches slug of the service type. required if service_id is NULL, and you want role to be for every service of every type. if NULL role will be for every service of every type
+    })
+  }
+
+  down () {
+    this.drop('acl_roles')
+  }
+}
+
+module.exports = AclRoleSchema

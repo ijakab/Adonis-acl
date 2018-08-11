@@ -1,0 +1,22 @@
+'use strict'
+
+const Schema = use('Schema')
+
+class AclActionSchema extends Schema {
+  up () {
+    this.create('acl_actions', (table) => {
+      table.increments()
+      table.timestamps()
+        table.string('title') //You might not use this if you want localized titles and desc.
+        table.string('description')
+        table.string('locale_code') //If you need to assign some data to assign for translation, put it here. You can also use slug for same purpose, but be aware that slug is unique, so so if you want the same translation for multiple record, it might be a problem
+        table.string('slug').notNullable().unique()
+    })
+  }
+
+  down () {
+    this.drop('acl_actions')
+  }
+}
+
+module.exports = AclActionSchema

@@ -1,0 +1,20 @@
+'use strict'
+
+const Schema = use('Schema')
+
+class AclRoleActionSchema extends Schema {
+  up () {
+    this.create('acl_role_actions', (table) => {
+        table.increments()
+        table.timestamps()
+        table.integer('acl_role_id')
+        table.string('acl_action_slug')
+    })
+  }
+
+  down () {
+    this.drop('acl_role_actions')
+  }
+}
+
+module.exports = AclRoleActionSchema

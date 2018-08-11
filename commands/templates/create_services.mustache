@@ -1,0 +1,23 @@
+'use strict'
+
+const Schema = use('Schema')
+
+class AclServiceSchema extends Schema {
+  up () {
+    this.create('acl_services', (table) => {
+        //name 'services' is really for the lack of the better name. it represents parts of your app that need different access control. E.g. if you need to give users ability to create custom roles for their own social network site
+        table.increments()
+        table.timestamps()
+        table.string('slug').notNullable()
+        table.string('type').notNullable() //services have types, such as 'forum', 'agency', 'social'
+        //there is always 'application' service of type 'application'. You can assign here your general roles, or if you don't need services everything
+        table.string('relation') //this is added in order to easier integrate with existing app. E.g. if you have your table forums, you requests probably have id's or slug's or something third, you should copy that here (and update it accordingly). it should be unique for every service type, as those 2 will be used to uniquely identify the service
+    })
+  }
+
+  down () {
+    this.drop('acl_services')
+  }
+}
+
+module.exports = AclServiceSchema
