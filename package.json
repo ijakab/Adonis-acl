@@ -1,6 +1,6 @@
 {
   "name": "Adonis-Starter",
-  "version": "0.9.7",
+  "version": "0.0.1",
   "description": "Adonis starter",
   "main": "./src/Services/AclService.js",
   "author": "ijakab",
