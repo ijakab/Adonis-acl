@@ -1,5 +1,5 @@
 {
-  "name": "Adonis-Acl",
+  "name": "adonis-acl-advanced",
   "version": "0.0.1",
   "description": "Acl provider for adonis.js framework",
   "main": "./src/Services/AclService.js",
@@ -26,13 +26,6 @@
   "autoload": {
     "App": "./app",
     "CustomTest": "./test/Traits"
-  },
-  "nyc": {
-    "include": [
-      "src",
-      "providers",
-      "commanads"
-    ]
   },
   "repository": {
     "type": "git",
