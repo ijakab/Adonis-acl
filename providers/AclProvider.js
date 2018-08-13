@@ -6,7 +6,9 @@ class AclProvider extends ServiceProvider {
       //Services
       this.app.bind('Adonis/AclService', () => {
           const Config = this.app.use('Adonis/Src/Config')
-        return require('../src/Services/AclService')
+          let service = require('../src/Services/AclService')
+          service.init(Config)
+          return service
       })
       this.app.bind('Adonis/Acl/Parser', () => {
         return require('../src/Services/AclStringParser')

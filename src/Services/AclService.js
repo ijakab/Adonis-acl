@@ -7,14 +7,15 @@ const RoleAction = use('Adonis/Acl/RoleAction')
 const UserRole = use('Adonis/Acl/UserRole')
 const Database = use('Database')
 
-const parser = use('App/Services/AclStringParser')
-const existingActions = require('../../AclConfig')
+const parser = use('Adonis/Acl/Parser')
+let existingActions
 
 let AclService = {
 
     init(Config) {
         this.Config = Config
         User = use(Config.get('acl.userPath'))
+        existingActions = Config.get('acl.existingActions')
     },
 
     //SERVICES
