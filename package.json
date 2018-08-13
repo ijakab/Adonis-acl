@@ -1,6 +1,6 @@
 {
   "name": "adonis-acl-advanced",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Acl provider for adonis.js framework",
   "main": "./src/Services/AclService.js",
   "author": "ijakab",
