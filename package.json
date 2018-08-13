@@ -1,7 +1,7 @@
 {
-  "name": "Adonis-Starter",
+  "name": "Adonis-Acl",
   "version": "0.0.1",
-  "description": "Adonis starter",
+  "description": "Acl provider for adonis.js framework",
   "main": "./src/Services/AclService.js",
   "author": "ijakab",
   "license": "UNLICENSED",
