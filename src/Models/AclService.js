@@ -4,9 +4,10 @@ const Model = use('Model')
 
 class AclService extends Model {
 
-    static boot() {
-        super.boot()
-        this.addTrait('AclService')
+    static get traits() {
+        return [
+            '@provider:Adonis/Acl/ServiceTrait'
+        ]
     }
 
     //Relations
@@ -14,7 +15,7 @@ class AclService extends Model {
     //That logic needs to be custom implemented
 
     possibleActions() {
-        return this.belongsToMany('App/Models/AclAction', 'service_type', 'action_slug', 'type', 'slug').pivotTable('acl_action_services')
+        return this.belongsToMany('Adonis/Acl/Action', 'service_type', 'action_slug', 'type', 'slug').pivotTable('acl_action_services')
     }
 }
 

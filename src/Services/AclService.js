@@ -1,16 +1,21 @@
-const User = use('App/Models/User')
-const ActionService = use('App/Models/AclActionService')
-const Action = use('App/Models/AclAction')
-const Role = use('App/Models/AclRole')
-const Service = use('App/Models/AclService')
-const RoleAction = use('App/Models/AclRoleAction')
-const UserRole = use('App/Models/AclUserRole')
+let User
+const ActionService = use('Adonis/Acl/ActionService')
+const Action = use('Adonis/Acl/Action')
+const Role = use('Adonis/Acl/Role')
+const Service = use('Adonis/Acl/Service')
+const RoleAction = use('Adonis/Acl/RoleAction')
+const UserRole = use('Adonis/Acl/UserRole')
 const Database = use('Database')
 
 const parser = use('App/Services/AclStringParser')
 const existingActions = require('../../AclConfig')
 
-module.exports = {
+let AclService = {
+
+    init(Config) {
+        this.Config = Config
+        User = use(Config.get('acl.userPath'))
+    },
 
     //SERVICES
     async createService(str) {
@@ -410,3 +415,5 @@ module.exports = {
         return serviceStr
     }
 }
+
+module.exports = AclService

@@ -14,7 +14,7 @@ class AclActionService extends Model {
 
     //Relations
     action() {
-        return this.belongsTo('App/Models/AclAction', 'action_slug', 'slug')
+        return this.belongsTo('Adonis/Acl/Action', 'action_slug', 'slug')
     }
 }
 

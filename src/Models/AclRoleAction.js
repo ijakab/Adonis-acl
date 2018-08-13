@@ -6,11 +6,11 @@ class AclRoleAction extends Model {
 
     //Relations
     role() {
-        return this.belongsTo('App/Models/AclRole')
+        return this.belongsTo('Adonis/Acl/Role')
     }
 
     action() {
-        return this.belongsTo('App/Models/AclAction', 'acl_action_slug', 'slug')
+        return this.belongsTo('Adonis/Acl/Action', 'acl_action_slug', 'slug')
     }
 
 }

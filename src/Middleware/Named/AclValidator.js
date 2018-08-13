@@ -1,6 +1,6 @@
 'use strict'
-const AclService = use('App/Services/AclService')
-const parser = use('App/Services/AclStringParser')
+const AclService = use('Adonis/AclService')
+const parser = use('Adonis/Acl/Parser')
 
 class AclValidator {
   async handle ({request, user, response}, next, aclParams) {

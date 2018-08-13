@@ -1,5 +1,5 @@
 'use strict'
-const parser = use('App/Services/AclStringParser')
+const parser = use('Adonis/Acl/Parser')
 
 class AclService {
   register (Model) {
