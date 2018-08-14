@@ -18,10 +18,18 @@ module.exports = {
         return obj
     },
 
-    makeServiceStr(middlewareStr, param) {
-        let serviceStr = middlewareStr.replace(' ', ':')
-        if(param) serviceStr += param
-        return serviceStr
+    makeServiceStr(aclParams, requestParams) {
+        let to_replace = aclParams[2].match(/{.+}/)
+        let replaced_full
+        if(!to_replace) replaced_full = aclParams[2]
+        else {
+            replaced_full = aclParams[2]
+            for(let replace of to_replace) {
+                let param_name = replace.substring(1, replace.length-1)
+                replaced_full = replaced_full.replace(replace, requestParams[param_name])
+            }
+        }
+        return `${aclParams[1]}:${replaced_full}`
     },
 
     operationInfo(middlewareStr) {

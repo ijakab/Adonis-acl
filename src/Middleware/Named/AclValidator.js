@@ -3,11 +3,9 @@ const AclService = use('Adonis/AclService')
 const parser = use('Adonis/Acl/Parser')
 
 class AclValidator {
-  async handle ({request, user, response}, next, aclParams) {
+  async handle (ctx, next, aclParams) {
     // call next to advance the request
-      let serviceParam;
-      if(aclParams[2]) serviceParam = request.all()[aclParams[2]]
-      let serviceStr = parser.makeServiceStr(aclParams[1], serviceParam)
+      let serviceStr = parser.makeServiceStr(aclParams, ctx.request.all())
       let operation_info = parser.operationInfo(aclParams[0])
 
       let passes = true
