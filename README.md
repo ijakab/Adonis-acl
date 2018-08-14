@@ -1,9 +1,9 @@
-#Advanced Adonis ACL
+# Advanced Adonis ACL
 This is Access control list provider for [Adonis](https://adonisjs.com/) It was heavily inspired by [Adonis ACL](https://github.com/enniel/adonis-acl) provider. In fact, we recommend using it if it suits your needs, as it is much simpler. This provider introduces concept of services as a way to assign different roles to different parts of your application
 
-##Installation
+## Installation
 1. *Install the package*
->npm install adonis-acl-advanced
+>adonis install adonis-acl-advanced
 1. *Register a providers*
 Inside `start/app.js`
 ```javascript
