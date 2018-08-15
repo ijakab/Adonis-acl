@@ -1,7 +1,9 @@
 # Advanced Adonis ACL
+
 This is Access control list provider for [Adonis](https://adonisjs.com/) It was heavily inspired by [Adonis ACL](https://github.com/enniel/adonis-acl) provider. In fact, we recommend using it if it suits your needs, as it is much simpler. This provider introduces concept of services as a way to assign different roles to different parts of your application
 
 ## Installation
+
 1. *Install the package*
 >node ace install adonis-acl-advanced
 1. *Register a providers*
@@ -67,6 +69,7 @@ Run migrations with
 Inside your code, access AclService by `const AclService = use('Adonis/AclService')`. Everything you need should be possible to access that variable
 
 ## Services
+
 Concept of services is really named that way for the lack of the better name. They represent different parts of your application that need to have different access control. For example, your users are allowed to create their own blog, and assign their own roles to users of their choice to their blog.
 Every blog, forum, social media page, chat room or anything else is represented by a **service**
 Every service record has these properties:
@@ -124,6 +127,7 @@ async resetActions() | void | void | Truncates previously existing actions, and 
 async resetActionScope(serviceType, actions) | void | serviceType - **Mandatory** string, matches *type* property of services, actions - *Mandatory* array of strings, matches actions slugs you want to assign to service | You want to scope actions to service types, in other words you don't want any forum to have *AddUserToChat* action. That is why you assign list of available actions to service types. Deletes relation from roles whose services no longer have scope to action
 
 ##Roles
+
 Roles represent positions that users have on application. Roles are bound to services - Each service has their own roles. Users link to roles and roles link to actions.
 Every role record has these properties
 
@@ -168,6 +172,7 @@ await AclService.createRole(roleObj)
 ```
 
 ##Linking
+
 By now, we described how to create services, roles and actions. Now, we need a way to link those
 
 Methods related to linking:
@@ -179,6 +184,7 @@ async linkUsersRole(role_id, userIds) | **role_id** - **Mandatory**, **userIds**
 async async unlinkUserRole(role_id, user_id) | **role_id** - **Mandatory**, **user_id** - **Mandatory** | void | removes user with provided id from role with provided id
 
 ##Validation
+
 We need a simple method that will check if actions or roles are assigned on services
 
 Methods related to validation:
@@ -204,6 +210,7 @@ let userObj = user.toJSON()
 ```
 
 ##Listings
+
 Sometimes, you will need to display all actions to admin or all roles user has
 
 Methods related to listings:
@@ -218,7 +225,8 @@ async getUserRoles(initialQuery, serviceString) | **initialQuery** - **Mandatory
 async getUserActions(initialQuery, serviceString) | **initialQuery** - **Mandatory** see `userCan`, **serviceString** - **Mandatory** | Returns instance of VanillaSerializer with user object with roles with actions that he has on service attached to it | Yes
 
 ##Middleware
-This provider ships with default aclMiddleware. It can be used to check if user is some role or can perform action, but you still have to implement any custom logic (e.g. user does not have action *DeletePosts* but he can still delete his own posts).
+
+This provider ships with default aclMiddleware. It can be used to check if user *is* some role or *can* perform action, but you still have to implement any custom logic (e.g. user does not have action *DeletePosts* but he can still delete his own posts).
 It is important to note that check will be performed for user that you have defined in `ctx.user` by the time middleware executes. If none is there, it will try to get user from `ctx.auth.getUser()`
 Registering a route on middleware is very easy:
 ```javascript
@@ -232,10 +240,11 @@ That is why, when defining service in middleware, you can pass arguments inside 
 So probably, you will have something like this
 
 ```javascript
-Route.get(/**/).middleware(['aclValidator:can(DoThis DoThat),forum:~{forum_id}'])
+Route.get(/**/).middleware(['aclValidator:is(Admin),forum:~{forum_id}'])
 ```
 
 **Final note**: As of current version, middleware checks actions one by one in the loop, so keep it on 3 or less actions. If you need to check more actions, why not introduce new action, that is in fact multiple actions? Better logic will be implemented soon.
 
 ##Disclaimer
+
 This is very early version of the provider, built first and foremost for one of out bigger projects. It will be updated and new functionality will be added as time passes
