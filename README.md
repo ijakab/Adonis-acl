@@ -56,8 +56,11 @@ const namedMiddleware = {
 ```
 1. *Setup database*
 Add migrations with
+
 >node ace acl:setup
+
 Run migrations with
+
 >node ace migration:run
 
 Further documentation soon
