@@ -79,23 +79,36 @@ relation | Unique identifier within service type by foreign relation. E.g. you p
 
 In using this provider, you will often have to specify the service you are interested in. For that reason, we introduce concept of **service strings** - a string formatted in that way our provider can understand it and identify requested service
 It is formatted as `serviceType:service`, where service Type matches above described *type*
-*service* can be represented by it's slug, so *forum:ThisForum* will match service with type *forum* and slug *ThisForum*
+*service* can be represented by it's slug, so `forum:ThisForum` will match service with *type = forum* and *slug = ThisForum*
 
 You can also use three meta characters in describing service
 
 Character | Description | Example
 --------- | ----------- | -------
-~ | Indicates identification of service by *relation* property | forum:~2 identifies service with *type = forum* and *relation = 2*
-% | Indicates identification of service by *id* property | chat:%51 identifies service with *type = chat* and *id = 51*
-\* | Indicate all services of given type. **Cannot always be used** | page:\* identifies all services with *type = page*
+~ | Indicates identification of service by *relation* property | `forum:~2` identifies service with *type = forum* and *relation = 2*
+% | Indicates identification of service by *id* property | `chat:%51` identifies service with *type = chat* and *id = 51*
+\* | Indicate all services of given type. **Cannot always be used** | `page:\*` identifies all services with *type = page*
 
-You should always create *application:application* service in your seeder, which represent you general, application level service
+You should always create `application:application` service in your seeder, which represent you general, application level service
 
 Methods related to services:
+**Note:** If method if *EagerFriendly*, it means that, instead of serviceString you can pass it service object if you loaded it previously, and it will make another request to database. **Be careful, if you are loading on your own, to load all necessary resources**
 
 Declaration | Inputs | Returns | Description | EagerFriendly
 ----------- | ------ | ------- | ----------- | -------------
-async createService(serviceString) | serviceString - *Mandatory*. Service string as described above. Service indicators can be nested, so you can pass service:slug:~relation, but you should not pass id. Slug must be passed | void | Creates service as specified by service string. If relation is passed, it will be added to the service, so later you can access service by relation | No
-async createManyServices(serviceStringArray) | serviceStringArray - *Mandatory* array of serviceStrings, like in the method above | void | Everything like in function above, except it will make multiple services in one database query | No
-async getServiceId(serviceString) | serviceString - *Mandatory* Service string as described above | integer - id of service or null if \* meta character was passed | Tries to get id of service locally if it can (from serviceString), if not finds specified service in database | No
-async getService(serviceString, relations) | serviceString - *Mandatory*. relations - *Optional*, array<string>, represents addition resources to be eager loaded with service. Only ['possibleActions'] supported as of this version | Serialized service object with loaded relations | Loads service specified by serviceString. It will try to eager load resources specified in *relations* by adding them to knex.js's .with()
+async createService(serviceString) | serviceString - **Mandatory**. Service string as described above. Service indicators can be nested, so you can pass service:slug:~relation, but you should not pass id. Slug must be passed | void | Creates service as specified by service string. If relation is passed, it will be added to the service, so later you can access service by relation | No
+async createManyServices(serviceStringArray) | serviceStringArray - **Mandatory** array of serviceStrings, like in the method above | void | Everything like in function above, except it will make multiple services in one database query | No
+async getServiceId(serviceString) | serviceString - **Mandatory** Service string as described above | integer - id of service or null if \* meta character was passed | Tries to get id of service locally if it can (from serviceString), if not finds specified service in database | No
+async getService(serviceString, relations) | serviceString - **Mandatory**. relations - **Optional**, array of strings, represents addition resources to be eager loaded with service. Only ['possibleActions'] supported as of this version | Serialized service object with loaded relations | Loads service specified by serviceString. It will try to eager load resources specified in *relations* by adding them to knex.js's .with() | Yes
+
+## Actions
+
+Actions represent keywords you will use to identify weather user can perform certain... actions on some part on you application. Action slugs should be defined in start of your application and should not change during runtime
+**Note**: These methods are very expensive. `resetActions` should only be called on the start of your application **when you introduce or remove existing actions**. `resetActionScope` may be needed during runtime, but on rare occasions by super admin
+
+Methods related to actions;
+
+Declaration | Inputs | Returns | Description
+----------- | ------ | ------- | -----------
+async resetActions() | void | void | Truncates previously existing actions, and reads new ones from `config/acl.js`. Removes links to no-more existing actions (e.g. if someone had permission for action that no longer exists, it will be removed)
+async resetActionScope(serviceType, actions) | serviceType - **Mandatory** string, matches *type* property of services, actions - *Mandatory* array of strings, matches actions slugs you want to assign to service | You want to scope actions to service types, in other words you don't want any forum to have *AddUserToChat* action. That is why you assign list of available actions to service types. Deletes relation from roles whose services no longer have scope to action
