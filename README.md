@@ -238,7 +238,7 @@ Route.get(/**/).middleware(['aclValidator:can(DoThis DoThat),application:applica
 This is a simple example but most of the time it will not be enough.
 First, your routes probably don't accept id or slugs from of the ACL service, but identifiers from your other tables. That's where ~ meta character comes in handy, as you can access service by it's *relation* property
 Second, even that relation will come from request, you don't know it when you define middleware.
-That is why, when defining service in middleware, you can pass arguments inside curly braces, {likeThis}. Middleware will replace that part of the string with that property on ctx.request.all() object
+That is why, when defining service in middleware, you can pass arguments inside curly braces, {likeThis}. Middleware will replace that part of the string with that property on `ctx.request.all()` object
 So probably, you will have something like this
 
 ```javascript
