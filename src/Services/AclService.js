@@ -244,6 +244,7 @@ let AclService = {
             .where('acl_role_id', role_id)
             .delete()
         await this.linkRoleActions(role_id, actions)
+        //todo: check service has action
     },
 
     //VALIDATION
