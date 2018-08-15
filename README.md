@@ -55,6 +55,7 @@ const namedMiddleware = {
 }
 ```
 1. *Setup database*
+
 Add migrations with
 
 >node ace acl:setup
@@ -63,4 +64,14 @@ Run migrations with
 
 >node ace migration:run
 
-Further documentation soon
+Inside your code, access AclService by `const AclService = use('Adonis/AclService')`. Everything you need should be possible to access that variable
+
+## Services
+Concept of services is really named that way for the lack of the better name. They represent different parts of your application that need to have different access control. For example, your users are allowed to create their own blog, and assign their own roles to users of their choice to their blog.
+Every blog, forum, social media page, chat room or anything else is represented by a **service**
+
+Property name | Description
+------------- | -----------
+type | Type of service, such as forum, chat, company etc. *Mandatory*
+slug | Unique identifier for service within service type. Represents concrete service. E.g. if 2 records with type forum have slugs ThisForum ThatForum. *Mandatory*
+relation | Unique identifier within service type by foreign relation. E.g. you probably don't just have forums as services in this ACL, but you have collection forums. This param should match it's id, slug or anything you use to identify it, and should be update accordingly. *Optional*
