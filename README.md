@@ -123,10 +123,10 @@ Methods related to actions:
 
 Declaration | Inputs | Returns | Description
 ----------- | ------ | ------- | -----------
-async resetActions() | void | void | Truncates previously existing actions, and reads new ones from `config/acl.js`. Removes links to no-more existing actions (e.g. if someone had permission for action that no longer exists, it will be removed)
-async resetActionScope(serviceType, actions) | void | serviceType - **Mandatory** string, matches *type* property of services, actions - *Mandatory* array of strings, matches actions slugs you want to assign to service | You want to scope actions to service types, in other words you don't want any forum to have *AddUserToChat* action. That is why you assign list of available actions to service types. Deletes relation from roles whose services no longer have scope to action
+async resetActions() | void | void  | Truncates previously existing actions, and reads new ones from `config/acl.js`. Removes links to no-more existing actions (e.g. if someone had permission for action that no longer exists, it will be removed)
+async resetActionScope(serviceType, actions) | serviceType - **Mandatory** string, matches *type* property of services, actions - *Mandatory* array of strings, matches actions slugs you want to assign to service | void | You want to scope actions to service types, in other words you don't want any forum to have *AddUserToChat* action. That is why you assign list of available actions to service types. Deletes relation from roles whose services no longer have scope to action
 
-##Roles
+## Roles
 
 Roles represent positions that users have on application. Roles are bound to services - Each service has their own roles. Users link to roles and roles link to actions.
 Every role record has these properties
@@ -148,8 +148,8 @@ Methods related to roles:
 Declaration | Inputs | Returns | Description
 ----------- | ------ | ------- | -----------
 async createRoleObject(role, serviceString, isPublic = true, isForeign = false) | **role** - **Mandatory** if string is passed it will be assumed as slug. You can pass object and add any properties from above you need. **serviceString** **Mandatory**. `*` meta characters can be used for specifying role is for all services of the type. if `*:*` is passed role will be for all services. | Role object | Creates role object from given params. **Does not create object in database**
-async createRole(roleObject) | roleObject **Mandatory** that has all required properties role record has | void | Writes role into database. You can send your own object in this function **but it is recommended that you get object from `createRoleObject` method**
-async deleteRole(role_id) | role_id **Mandatory** matches the *id* property of role record, get it from `getRole` method | void | removes role from database, removes all links that role has
+async createRole(roleObject) | **roleObject** **Mandatory** that has all required properties role record has | void | Writes role into database. You can send your own object in this function **but it is recommended that you get object from `createRoleObject` method**
+async deleteRole(role_id) | **role_id** **Mandatory** matches the *id* property of role record, get it from `getRole` method | void | removes role from database, removes all links that role has
 
 Creating role admin for application level would look like something like this:
 ```javascript
@@ -171,11 +171,12 @@ let roleObj = await AclService.createRoleObject('HateSpeechRemover', 'blog:*')
 await AclService.createRole(roleObj)
 ```
 
-##Linking
+## Linking
 
 By now, we described how to create services, roles and actions. Now, we need a way to link those
 
 Methods related to linking:
+
 Declaration | Inputs | Returns | Description
 ----------- | ------ | ------- | -----------
 async linkRoleActions(role_id, actions) | **role_id** - **Mandatory**, matches id property of role record. get it from `getRole` method. **actions** **Mandatory**, array of action slugs you want to match | void | Adds actions to role
@@ -183,7 +184,7 @@ async resetRoleActions(role_id, actions) | **role_id** - **Mandatory**, matches 
 async linkUsersRole(role_id, userIds) | **role_id** - **Mandatory**, **userIds** - **Mandatory** array of numbers matching ids of users in your users collection | void | Assigns users with provided ids role with provided id
 async async unlinkUserRole(role_id, user_id) | **role_id** - **Mandatory**, **user_id** - **Mandatory** | void | removes user with provided id from role with provided id
 
-##Validation
+## Validation
 
 We need a simple method that will check if actions or roles are assigned on services
 
@@ -209,11 +210,12 @@ if(user.aclResult){//delete post}
 let userObj = user.toJSON()
 ```
 
-##Listings
+## Listings
 
 Sometimes, you will need to display all actions to admin or all roles user has
 
 Methods related to listings:
+
 Declaration | Inputs | Returns | Description | EagerFriendly
 ----------- | ------ | ------- | ----------- | -------------
 async getRole(serviceString, role, relations) | **serviceString** - **Mandatory**, **role** - **Mandatory** matches *slug* property on role record, **relations** - resources to eager load with role | instance of VanillaSerializer for provided role | Fetches info for provided role from database and adds provided relations to knex.js's with | Yes
@@ -224,7 +226,7 @@ async getServiceActions(serviceString) | **serviceString** - **Mandatory** | ret
 async getUserRoles(initialQuery, serviceString) | **initialQuery** - **Mandatory** see `userCan`, **serviceString** - **Mandatory** | Returns instance of VanillaSerializer with user object with roles that he has on service attached to it | | Yes
 async getUserActions(initialQuery, serviceString) | **initialQuery** - **Mandatory** see `userCan`, **serviceString** - **Mandatory** | Returns instance of VanillaSerializer with user object with roles with actions that he has on service attached to it | Yes
 
-##Middleware
+## Middleware
 
 This provider ships with default aclMiddleware. It can be used to check if user *is* some role or *can* perform action, but you still have to implement any custom logic (e.g. user does not have action *DeletePosts* but he can still delete his own posts).
 It is important to note that check will be performed for user that you have defined in `ctx.user` by the time middleware executes. If none is there, it will try to get user from `ctx.auth.getUser()`
@@ -245,6 +247,6 @@ Route.get(/**/).middleware(['aclValidator:is(Admin),forum:~{forum_id}'])
 
 **Final note**: As of current version, middleware checks actions one by one in the loop, so keep it on 3 or less actions. If you need to check more actions, why not introduce new action, that is in fact multiple actions? Better logic will be implemented soon.
 
-##Disclaimer
+## Disclaimer
 
 This is very early version of the provider, built first and foremost for one of out bigger projects. It will be updated and new functionality will be added as time passes
