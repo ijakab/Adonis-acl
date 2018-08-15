@@ -69,6 +69,7 @@ Inside your code, access AclService by `const AclService = use('Adonis/AclServic
 ## Services
 Concept of services is really named that way for the lack of the better name. They represent different parts of your application that need to have different access control. For example, your users are allowed to create their own blog, and assign their own roles to users of their choice to their blog.
 Every blog, forum, social media page, chat room or anything else is represented by a **service**
+Every service record has these properties:
 
 Property name | Description
 ------------- | -----------
@@ -104,11 +105,63 @@ async getService(serviceString, relations) | serviceString - **Mandatory**. rela
 ## Actions
 
 Actions represent keywords you will use to identify weather user can perform certain... actions on some part on you application. Action slugs should be defined in start of your application and should not change during runtime
-**Note**: These methods are very expensive. `resetActions` should only be called on the start of your application **when you introduce or remove existing actions**. `resetActionScope` may be needed during runtime, but on rare occasions by super admin
+Every action record has these properties:
 
-Methods related to actions;
+Property name | Description
+------------- | -----------
+id | Number that uniquely identifies action. You should not set it yourself but let database handle it
+slug | String that uniquely identifies action. Every relation with actions is handled through slug, since id's can change on reset **Mandatory**
+title | String to be used for displaying to users. **Optional**
+description | String to be represented to users. **Optional**
+locale_code | Any additional information that you want to store for purpose of translation **Note**: This provider does not handle translation logic as of this version **Optional**
+
+Methods related to actions:
+**Note**: These methods are very expensive. `resetActions` should only be called on the start of your application **when you introduce or remove existing actions**. `resetActionScope` may be needed during runtime, but on rare occasions by super admin
 
 Declaration | Inputs | Returns | Description
 ----------- | ------ | ------- | -----------
 async resetActions() | void | void | Truncates previously existing actions, and reads new ones from `config/acl.js`. Removes links to no-more existing actions (e.g. if someone had permission for action that no longer exists, it will be removed)
-async resetActionScope(serviceType, actions) | serviceType - **Mandatory** string, matches *type* property of services, actions - *Mandatory* array of strings, matches actions slugs you want to assign to service | You want to scope actions to service types, in other words you don't want any forum to have *AddUserToChat* action. That is why you assign list of available actions to service types. Deletes relation from roles whose services no longer have scope to action
+async resetActionScope(serviceType, actions) | void | serviceType - **Mandatory** string, matches *type* property of services, actions - *Mandatory* array of strings, matches actions slugs you want to assign to service | You want to scope actions to service types, in other words you don't want any forum to have *AddUserToChat* action. That is why you assign list of available actions to service types. Deletes relation from roles whose services no longer have scope to action
+
+##Roles
+Roles represent positions that users have on application. Roles are bound to services - Each service has their own roles. Users link to roles and roles link to actions.
+Every role record has these properties
+
+Property name | Description
+------------- | -----------
+id | Number that uniquely identifies role. You should not set it yourself but let database handle it
+acl_service_id | Number, matches *id* property of service this role is on. If set to null, it indicates that role is on every service of the type - useful with foreign roles (see below) **Mandatory or null**
+service_type | string, matches *type* property of service this role is on. If set to null, it indicates role is on every existing service **Mandatory or null**
+slug | String that uniquely identifies role withing the service **Mandatory**
+title | String to be used for displaying to users. **Optional**
+description | String to be represented to users. **Optional**
+locale_code | Any additional information that you want to store for purpose of translation **Note**: This provider does not handle translation logic as of this version **Optional**
+public | boolean describing weather role is publicly available or tied to service. E.g. if one of your service makes role *Monkey* you don't want all services to have default role *Monkey* **Mandatory**
+foreign | boolean describing weather role is created by parent service. E.g. if you have companies that create their forums (two different services), but they want to automatically assign their admin to some role on the forum. That role would be foreign. E.g. you want your application admin to assume some implicit roles in all or some other services. Those roles would be foreign **Mandatory**
+
+Methods related to roles:
+
+Declaration | Inputs | Returns | Description
+----------- | ------ | ------- | -----------
+async createRoleObject(role, serviceString, isPublic = true, isForeign = false) | **role** - **Mandatory** if string is passed it will be assumed as slug. You can pass object and add any properties from above you need. **serviceString** **Mandatory**. \* meta characters can be used for specifying role is for all services of the type. if `\*:\*` is passed role will be for all services. | Role object | Creates role object from given params. **Does not create object in database**
+async createRole(roleObject) | roleObject **Mandatory** that has all required properties role record has | void | Writes role into database. You can send your own object in this function **but it is recommended that you get object from `createRoleObject` method
+
+Creating role admin for application level would look like something like this:
+```javascript
+const AclService = use('Adonis/AclService')
+let roleObj = await AclService.createRoleObject('Admin', 'application:application')
+await AclService.createRole(roleObj)
+```
+And making custom role like this
+```javascript
+const AclService = use('Adonis/AclService')
+let roleObj = await AclService.createRoleObject({slug: 'Monkey', locale_code: 'monkey', title: 'Real monkey', public: false}, 'forum:~3')
+//Note that we could have also defined public property through 3rd method parameter
+await AclService.createRole(roleObj)
+```
+Making role for every blog
+```javascript
+const AclService = use('Adonis/AclService')
+let roleObj = await AclService.createRoleObject('HateSpeechRemover', 'blog:*')
+await AclService.createRole(roleObj)
+```
