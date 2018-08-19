@@ -17,7 +17,7 @@ const providers = [
 
 const aceProviders = [
     //anything you have
-    'adonis-cache/providers/CommandsProvider'
+    'adonis-acl-advanced/providers/CommandsProvider'
     //anything you have
 ]
 ```
